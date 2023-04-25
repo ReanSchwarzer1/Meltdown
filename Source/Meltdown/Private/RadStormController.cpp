@@ -28,6 +28,7 @@ void URadStormController::BeginPlay()
 	stormCurrentlyActive = false;
 	
 	stormEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), StormSystem, GetOwner()->GetActorLocation());
+	stormEffectInstance->Deactivate();
 }
 
 
@@ -38,11 +39,14 @@ void URadStormController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 	// ...
 
+	UE_LOG(LogTemp, Warning, TEXT("Start cd: %f"), stormStartCountdown);
+	UE_LOG(LogTemp, Warning, TEXT("End cd: %f"), stormEndCountdown); 
+	UE_LOG(LogTemp, Warning, TEXT("The boolean value is %s"), (stormCurrentlyActive ? TEXT("true") : TEXT("false")));
 
 	if (!stormCurrentlyActive) //if there is still time left to count down
 	{
 		stormStartCountdown -= DeltaTime;
-		bool activateStorm = stormStartCountdown >= 0.0f;
+		bool activateStorm = stormStartCountdown <= 0.0f;
 
 		if (activateStorm)
 		{
@@ -56,7 +60,7 @@ void URadStormController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	else //the storm IS active
 	{
 		stormEndCountdown -= DeltaTime;
-		bool endStorm = stormEndCountdown >= 0.0f;
+		bool endStorm = stormEndCountdown <= 0.0f;
 
 		if (endStorm)
 		{

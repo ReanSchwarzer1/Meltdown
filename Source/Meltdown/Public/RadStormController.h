@@ -27,12 +27,14 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(BlueprintReadWrite)
+	//UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	float TimeBetweenStorms;
+	UPROPERTY(EditAnywhere)
 	float StormDuration;
-
 	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* StormSystem;
+
 
 private:
 	bool stormCurrentlyActive;
