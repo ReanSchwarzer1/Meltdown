@@ -29,6 +29,7 @@ void URadStormController::BeginPlay()
 	
 	stormEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), StormSystem, GetOwner()->GetActorLocation());
 	stormEffectInstance->Deactivate();
+
 }
 
 
@@ -39,10 +40,10 @@ void URadStormController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 	// ...
 
-	UE_LOG(LogTemp, Warning, TEXT("Start cd: %f"), stormStartCountdown);
-	UE_LOG(LogTemp, Warning, TEXT("End cd: %f"), stormEndCountdown); 
-	UE_LOG(LogTemp, Warning, TEXT("The boolean value is %s"), (stormCurrentlyActive ? TEXT("true") : TEXT("false")));
-
+	//UE_LOG(LogTemp, Warning, TEXT("Start cd: %f"), stormStartCountdown);
+	//UE_LOG(LogTemp, Warning, TEXT("End cd: %f"), stormEndCountdown); 
+	//UE_LOG(LogTemp, Warning, TEXT("Is the storm active? %s"), (stormCurrentlyActive ? TEXT("true") : TEXT("false")));
+	
 	if (!stormCurrentlyActive) //if there is still time left to count down
 	{
 		stormStartCountdown -= DeltaTime;
@@ -51,7 +52,11 @@ void URadStormController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		if (activateStorm)
 		{
 			stormCurrentlyActive = true;
-			stormEffectInstance->Activate();
+			UE_LOG(LogTemp, Warning, TEXT("exist? %s"), (stormEffectInstance ? TEXT("true") : TEXT("false")));
+			stormEffectInstance->Activate(); //this DOESNT WORK >:(
+			//stormEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), StormSystem, GetOwner()->GetActorLocation());
+
+			//well i guess this exists, probably should remove the reference? do these variables work like that? i hate pointers
 
 			//reset between timer
 			stormStartCountdown = TimeBetweenStorms;
