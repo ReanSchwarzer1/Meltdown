@@ -49,12 +49,14 @@ void URadStormController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		stormStartCountdown -= DeltaTime;
 		bool activateStorm = stormStartCountdown <= 0.0f;
 
+	
+
 		if (activateStorm)
 		{
 			stormCurrentlyActive = true;
-			UE_LOG(LogTemp, Warning, TEXT("exist? %s"), (stormEffectInstance ? TEXT("true") : TEXT("false")));
-			stormEffectInstance->Activate(); //this DOESNT WORK >:(
-			//stormEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), StormSystem, GetOwner()->GetActorLocation());
+			//UE_LOG(LogTemp, Warning, TEXT("exist? %s"), (stormEffectInstance ? TEXT("true") : TEXT("false")));
+			//stormEffectInstance->Activate(); //this DOESNT WORK >:(
+			stormEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), StormSystem, GetOwner()->GetActorLocation());
 
 			//well i guess this exists, probably should remove the reference? do these variables work like that? i hate pointers
 
@@ -71,6 +73,7 @@ void URadStormController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		{
 			stormEffectInstance->Deactivate();
 			stormCurrentlyActive = false;
+
 
 			//reset duration timer
 			stormEndCountdown = StormDuration;
