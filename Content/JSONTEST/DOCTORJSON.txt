@@ -1,1 +1,5 @@
-{"Stims Used: ":3}
+{
+	"Stims Crafted": 3
+	"Stims Used" : 2
+	"Peak Radiation" : 0.0
+}
