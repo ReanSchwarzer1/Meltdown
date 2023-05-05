@@ -29,6 +29,7 @@ void URadStormController::BeginPlay()
 	
 	stormEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), StormSystem, GetOwner()->GetActorLocation());
 	stormEffectInstance->Deactivate();
+
 }
 
 
@@ -37,40 +38,160 @@ void URadStormController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (SimpleTimer)
+	{
+		StormTimerControl(DeltaTime);
+
+	}
+	else if (stormCurrentlyActive) //the storm is not on a timer for on/off, so it's being turned on externally. We need to check if it should be turned off
+	{
+		CheckEndStorm(DeltaTime);
+	}
+
 	// ...
 
-	UE_LOG(LogTemp, Warning, TEXT("Start cd: %f"), stormStartCountdown);
-	UE_LOG(LogTemp, Warning, TEXT("End cd: %f"), stormEndCountdown); 
-	UE_LOG(LogTemp, Warning, TEXT("The boolean value is %s"), (stormCurrentlyActive ? TEXT("true") : TEXT("false")));
 
+
+	//UE_LOG(LogTemp, Warning, TEXT("Start cd: %f"), stormStartCountdown);
+	//UE_LOG(LogTemp, Warning, TEXT("End cd: %f"), stormEndCountdown); 
+	//UE_LOG(LogTemp, Warning, TEXT("Is the storm active? %s"), (stormCurrentlyActive ? TEXT("true") : TEXT("false")));
+	//
+	//if (!stormCurrentlyActive) //if there is still time left to count down
+	//{
+	//	stormStartCountdown -= DeltaTime;
+	//	bool activateStorm = stormStartCountdown <= 0.0f;
+
+	//
+
+	//	if (activateStorm)
+	//	{
+	//		stormEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), StormSystem, GetOwner()->GetActorLocation());
+
+	//		stormCurrentlyActive = true;
+
+	//		//reset between timer
+	//		stormStartCountdown = TimeBetweenStorms;
+	//	}
+	//}
+	//else //the storm IS active
+	//{
+	//	stormEndCountdown -= DeltaTime;
+	//	bool endStorm = stormEndCountdown <= 0.0f;
+
+	//	if (endStorm)
+	//	{
+	//		stormEffectInstance->Deactivate();
+	//		stormCurrentlyActive = false;
+
+
+	//		//reset duration timer
+	//		stormEndCountdown = StormDuration;
+
+	//	}
+
+	//}
+}
+
+void URadStormController::StartStormAtPosition(float duration, FVector position)
+{
+
+	stormEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), StormSystem, position);
+
+	stormCurrentlyActive = true;
+
+	StormDuration = duration;
+
+	stormEndCountdown = StormDuration;
+}
+
+void URadStormController::StartStorm(float duration)
+{
+	StartStormAtPosition(duration, GetOwner()->GetActorLocation());
+}
+
+
+void URadStormController::EndStorm()
+{
+	if (stormCurrentlyActive)
+	{
+		stormEffectInstance->Deactivate();
+		stormCurrentlyActive = false;
+
+	}
+}
+
+void URadStormController::StormTimerControl(float DeltaTime)
+{
 	if (!stormCurrentlyActive) //if there is still time left to count down
 	{
-		stormStartCountdown -= DeltaTime;
-		bool activateStorm = stormStartCountdown <= 0.0f;
+		CheckStartStorm(DeltaTime);
+		//stormStartCountdown -= DeltaTime;
+		//bool activateStorm = stormStartCountdown <= 0.0f;
+		 
 
-		if (activateStorm)
-		{
-			stormCurrentlyActive = true;
-			stormEffectInstance->Activate();
 
-			//reset between timer
-			stormStartCountdown = TimeBetweenStorms;
-		}
+		//if (activateStorm)
+		//{
+		//	stormEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), StormSystem, GetOwner()->GetActorLocation());
+
+		//	stormCurrentlyActive = true;
+
+		//	//reset between timer
+		//	stormStartCountdown = TimeBetweenStorms;
+		//}
 	}
 	else //the storm IS active
 	{
-		stormEndCountdown -= DeltaTime;
-		bool endStorm = stormEndCountdown <= 0.0f;
+		CheckEndStorm(DeltaTime);
+		//stormEndCountdown -= DeltaTime;
+		//bool endStorm = stormEndCountdown <= 0.0f;
 
-		if (endStorm)
-		{
-			stormEffectInstance->Deactivate();
-			stormCurrentlyActive = false;
+		//if (endStorm)
+		//{
+		//	stormEffectInstance->Deactivate();
+		//	stormCurrentlyActive = false;
 
-			//reset duration timer
-			stormEndCountdown = StormDuration;
 
-		}
+		//	//reset duration timer
+		//	stormEndCountdown = StormDuration;
+
+		//}
+
+	}
+}
+
+void URadStormController::CheckStartStorm(float DeltaTime)
+{
+	stormStartCountdown -= DeltaTime;
+	bool activateStorm = stormStartCountdown <= 0.0f;
+
+
+
+	if (activateStorm)
+	{
+		stormEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), StormSystem, GetOwner()->GetActorLocation());
+
+		stormCurrentlyActive = true;
+
+		//reset between timer
+		stormStartCountdown = TimeBetweenStorms;
+	}
+}
+
+void URadStormController::CheckEndStorm(float DeltaTime)
+{
+	stormEndCountdown -= DeltaTime;
+	bool endStorm = stormEndCountdown <= 0.0f;
+
+	if (endStorm)
+	{
+		EndStorm();
+		//stormEffectInstance->Deactivate();
+		//stormCurrentlyActive = false;
+
+
+		//reset duration timer
+		stormEndCountdown = StormDuration;
 
 	}
 }

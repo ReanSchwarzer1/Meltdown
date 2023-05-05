@@ -1,0 +1,5 @@
+{
+	"Stims Crafted": 0
+	"Stims Used" : 0
+	"Peak Radiation" : 0.0
+}
