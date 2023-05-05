@@ -36,10 +36,32 @@ public:
 	UNiagaraSystem* StormSystem;
 
 
+
+	UPROPERTY(EditAnywhere)
+	/// <summary>
+	/// If true, it will run on a continuous start/stop timer and be located on the actor that it's attached to
+	/// </summary>
+	bool SimpleTimer;
+
+	UFUNCTION(BlueprintCallable, Category = "Storm")
+	void StartStormAtPosition(float duration, FVector position);
+	UFUNCTION(BlueprintCallable, Category = "Storm")
+	void StartStorm(float duration);
+	//void StartStorm(FVector position);
+
+
+	UFUNCTION(BlueprintCallable, Category = "Storm")
+	void EndStorm();
+
 private:
 	bool stormCurrentlyActive;
 	//bool shouldActivateStorm;
 
 	float stormStartCountdown;
 	float stormEndCountdown;
+
+	void StormTimerControl(float DeltaTime);
+
+	void CheckStartStorm(float DeltaTime);
+	void CheckEndStorm(float DeltaTime);
 };
